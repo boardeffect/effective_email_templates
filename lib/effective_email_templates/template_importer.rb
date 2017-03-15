@@ -7,9 +7,13 @@ module EffectiveEmailTemplates
     def invoke(overwrite = false)
       Dir[Rails.root.join('app', 'views', '**', '*.liquid')].each do |liquid_template_filepath|
         slug = File.basename(liquid_template_filepath, '.liquid')
-        template = Effective::EmailTemplate.find_or_initialize_by(slug: slug)
+        # Customize for multitenancy
+        Client.unscoped.active.each do |client|
+          Client.current_id = client.id
 
-        update_template(template, liquid_template_filepath) if (template.persisted? && overwrite) || template.new_record?
+          template = Effective::EmailTemplate.find_or_initialize_by(client_id: client.id, slug: slug)
+          update_template(template, liquid_template_filepath) if (template.persisted? && overwrite) || template.new_record?
+        end
       end
     end
 
