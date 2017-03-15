@@ -12,6 +12,7 @@ module EffectiveEmailTemplates
           Client.current_id = client.id
 
           template = Effective::EmailTemplate.find_or_initialize_by(client_id: client.id, slug: slug)
+          puts template.inspect
           update_template(template, liquid_template_filepath) if (template.persisted? && overwrite) || template.new_record?
         end
       end
@@ -47,7 +48,8 @@ module EffectiveEmailTemplates
 
       template = add_template_meta(file, template)
       template.body = extract_template_body(file)
-      template.save
+      puts template.inspect
+      template.save!
 
       print_errors(template, liquid_template_filepath) unless template.valid?
     end
