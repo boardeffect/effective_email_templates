@@ -14,6 +14,7 @@ module Effective
     validates :subject,   presence: true
     validates :from,      presence: true
     validates :template,  presence: true
+    validates :client_id, presence: true
 
     before_validation :try_precompile
 
